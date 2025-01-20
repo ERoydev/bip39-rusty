@@ -11,7 +11,7 @@ fn main() -> Result<()> {
     println!("Hello, world!");
     let mnemonic = Mnemonic::new(Language::English, MnemonicType::Twelve);
     let entropy = mnemonic.generate_entropy();
-    println!("{:?}", entropy);
 
+    println!("{:?}", entropy);
     Ok(())
 }
