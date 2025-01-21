@@ -1,3 +1,4 @@
+use std::env::var;
 use rand::rngs::OsRng;
 use rand::RngCore;
 use sha256::digest;
@@ -16,6 +17,21 @@ pub struct Mnemonic {
     entropy: Vec<u8>,
     checksum: u8,
     mnemonic_phrase: String,
+}
+
+#[derive(Debug)]
+pub enum MnemonicError {
+    InvalidChecksum,
+    InvalidEntropy
+}
+
+impl std::fmt::Display for MnemonicError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            MnemonicError::InvalidChecksum => write!(f, "Invalid checksum."),
+            MnemonicError::InvalidEntropy => write!(f, "Invalid entropy."),
+        }
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -55,17 +71,22 @@ pub struct EntropyInfo {
 
 impl Mnemonic {
 
-    pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Mnemonic {
-        let raw_entropy = Mnemonic::generate_entropy(mnemonic_type);
-        let checksum_decimal = Mnemonic::checksum(&raw_entropy, mnemonic_type);
+    pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
+        let mut raw_entropy = Mnemonic::generate_entropy(mnemonic_type);
+        let checksum_decimal = Mnemonic::checksum(&raw_entropy, mnemonic_type)?;
+        let binary_entropy = Mnemonic::convert_entropy_to_binary(&raw_entropy);
 
-        Mnemonic {
+        println!("binary entropy: {}", binary_entropy);
+
+        raw_entropy.push(checksum_decimal);
+
+        Ok(Mnemonic {
             lang,
-            mnemonic_type,  // Ownership of `mnemonic_type` is moved here
-            entropy: raw_entropy,  // Pass `mnemonic_type` directly
+            mnemonic_type,
+            entropy: raw_entropy,
             checksum: checksum_decimal,
             mnemonic_phrase: String::new(),
-        }
+        })
     }
 
     pub fn print_mnemonic_data(&self) {
@@ -84,7 +105,7 @@ impl Mnemonic {
     }
 
 
-    fn checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> u8 {
+    fn checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> Result<u8, MnemonicError> {
         let hash = digest(entropy);
 
         if hash.len() < 2 {
@@ -95,7 +116,17 @@ impl Mnemonic {
         let checksum_index = if checksum_bits == 4 {1} else if checksum_bits == 8 {2} else {0};
 
         let checksum = &hash[..checksum_index]; // checksum in hexadecimal
-        u8::from_str_radix(&checksum, 16).expect("Invalid hexadecimal checksum value") // I convert hexadecimal to decimal in order to append in my raw entropy
+        u8::from_str_radix(&checksum, 16)// I convert hexadecimal to decimal in order to append in my raw entropy
+            .map_err(|_| MnemonicError::InvalidChecksum)
     }
 
+    fn convert_entropy_to_binary(entropy: &Vec<u8>) -> String {
+        let mut binary_entropy = String::new();
+        for el in entropy {
+            // Ensure each byte is represented by exactly 8 bits
+            let binary_repr = format!("{:08b}", el);
+            binary_entropy += &binary_repr
+        }
+        binary_entropy
+    }
 }

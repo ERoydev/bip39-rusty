@@ -1,17 +1,22 @@
 #![allow(unused)] // For beginning only
 
-use crate::prelude::*;
+use std::fmt::format;
 use bip39_rusty::{Mnemonic, MnemonicType, Language};
 
-mod error;
-mod prelude;
 mod utils;
 
-fn main() -> Result<()> {
-    let mnemonic = Mnemonic::new(Language::English, MnemonicType::Bits256);
+fn main() {
+    match Mnemonic::new(Language::English, MnemonicType::Bits256) {
+        Ok(mnemonic) => {
+            println!("Mnemonic created successfully!");
+            mnemonic.print_mnemonic_data();
+        }
+        Err(e) => {
+            eprintln!("Error creating mnemonic: {}", e);
+        }
+    }
 
-
-    mnemonic.print_mnemonic_data();
-
-    Ok(())
+    let x = 42;
+    let binary_x = format!("{:b}", x);
+    println!("The binary representation of {} is {}", x, binary_x);
 }
