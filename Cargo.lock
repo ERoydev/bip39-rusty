@@ -54,6 +54,7 @@ name = "bip39-rusty"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "hex",
  "rand",
  "sha256",
  "thiserror",

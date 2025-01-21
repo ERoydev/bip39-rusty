@@ -1,6 +1,7 @@
 use rand::rngs::OsRng;
 use rand::RngCore;
 use sha256::digest;
+use hex;
 
 mod language;
 pub use language::Language;
@@ -51,8 +52,6 @@ pub struct EntropyInfo {
 impl Mnemonic {
 
     pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Mnemonic {
-        let words: usize = mnemonic_type.words_count();
-
         Mnemonic {
             lang,
             mnemonic_type,
@@ -79,15 +78,10 @@ impl Mnemonic {
         }
 
         let checksum_bits = self.mnemonic_type.bits() / 32;
+        let checksum_index = if checksum_bits == 4 {1} else if checksum_bits == 8 {2} else {0};
 
-        let mut checksum: Vec<u8> = vec![];
-        let hash_bits = &hash[..checksum_bits];
-
-        println!("Hash: {}", hash);
-        println!("Hash_bits: {}", hash_bits);
-
-        String::from("asdaaw1231")
-
+        let checksum = &hash[..checksum_index];
+        String::from(checksum)
     }
 
 }
