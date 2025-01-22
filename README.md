@@ -77,6 +77,15 @@ fn main() {
 
 The `Language` module provides predefined wordlists. Currently supported:
 - English
+- Chinese Simplified
+- Chinese Traditional
+- Korean
+- Japanese
+- French
+- Czech
+- Italian
+- Portuguese
+- Spanish
 
 To add more languages, implement the wordlist in the `Language` module.
 
