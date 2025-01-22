@@ -18,9 +18,7 @@ This repository contains a custom implementation of the BIP-39 standard in Rust.
    ```
 
 2. Ensure you have Rust installed. If not, install it using [rustup](https://rustup.rs/):
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   ```
+
 
 3. Build the project:
    ```bash
