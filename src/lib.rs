@@ -75,8 +75,10 @@ pub struct EntropyInfo {
 impl Mnemonic {
 
     pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
+        // Used to create instance and use this instance to create mnemonic_phrases
         match Self::generator(lang, mnemonic_type) {
             Ok(mut mnemonic) => {
+                // After i have instance create i can generate phrase
                 mnemonic.mnemonic_phrase_generation();
                 Ok(mnemonic)
             }
@@ -87,9 +89,32 @@ impl Mnemonic {
         }
     }
 
+    /// Getter for the language.
+    pub fn language(&self) -> &Language {
+        &self.lang
+    }
+
+    /// Getter for the mnemonic type.
+    pub fn mnemonic_type(&self) -> MnemonicType {
+        self.mnemonic_type
+    }
+
+    /// Getter for the checksum.
+    pub fn checksum(&self) -> u8 {
+        self.checksum
+    }
+
+    /// Getter for the mnemonic phrase.
+    pub fn mnemonic_phrase(&self) -> &Vec<String> {
+        &self.mnemonic_phrase
+    }
+
     fn generator(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
+        /*
+        This is responsible to create Mneumonic instance and set initial values for checksum, entropy and so on
+        */
         let mut raw_entropy = Mnemonic::generate_entropy(mnemonic_type);
-        let checksum_decimal = Mnemonic::checksum(&raw_entropy, mnemonic_type)?;
+        let checksum_decimal = Mnemonic::generate_checksum(&raw_entropy, mnemonic_type)?;
         raw_entropy.push(checksum_decimal);
 
 
@@ -100,11 +125,6 @@ impl Mnemonic {
             checksum: checksum_decimal,
             mnemonic_phrase: Vec::new(),
         })
-    }
-
-    pub fn print_mnemonic_data(&self) {
-        println!("Raw Entropy: {:?}, Checksum_decimal: {}", self.entropy, self.checksum);
-        println!("Mnemonic_phrases: {:?}", self.mnemonic_phrase);
     }
 
     fn generate_entropy(mnemonic_type: MnemonicType) -> Vec<u8> {
@@ -118,11 +138,7 @@ impl Mnemonic {
         entropy
     }
 
-    fn add_mnemonic_phrase(&mut self, word: String) {
-        self.mnemonic_phrase.push(word);
-    }
-
-    fn checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> Result<u8, MnemonicError> {
+    fn generate_checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> Result<u8, MnemonicError> {
         let hash = digest(entropy);
 
         if hash.len() < 2 {
@@ -167,5 +183,10 @@ impl Mnemonic {
             let phrase = wordlist[decimal];
             self.add_mnemonic_phrase(String::from(phrase));
         }
+    }
+
+    fn add_mnemonic_phrase(&mut self, word: String) {
+        // Function to push words in mnemonic field in my Struct
+        self.mnemonic_phrase.push(word);
     }
 }
