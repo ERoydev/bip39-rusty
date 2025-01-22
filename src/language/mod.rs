@@ -1,3 +1,4 @@
+use std::fmt;
 
 mod chinese_simplified;
 mod chinese_traditional;

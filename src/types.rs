@@ -8,25 +8,25 @@ pub enum MnemonicType {
     Bits256, // 256 bits of entropy -> 32 bytes (256 bits / 8)
 }
 
-impl crate::MnemonicType {
+impl MnemonicType {
     pub const fn bytes(&self) -> usize {
         match self {
-            crate::MnemonicType::Bits128 => 16,
-            crate::MnemonicType::Bits256 => 32,
+            MnemonicType::Bits128 => 16,
+            MnemonicType::Bits256 => 32,
         }
     }
 
     pub const fn bits(&self) -> usize {
         match self {
-            crate::MnemonicType::Bits128 => 128,
-            crate::MnemonicType::Bits256 => 256,
+            MnemonicType::Bits128 => 128,
+            MnemonicType::Bits256 => 256,
         }
     }
 
     pub const fn words_count(&self) -> usize {
         match self {
-            crate::MnemonicType::Bits128 => MIN_WORDS,
-            crate::MnemonicType::Bits256 => MAX_WORDS,
+            MnemonicType::Bits128 => MIN_WORDS,
+            MnemonicType::Bits256 => MAX_WORDS,
         }
     }
 }

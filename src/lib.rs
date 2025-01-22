@@ -1,5 +1,3 @@
-use std::env::var;
-use std::thread::current;
 use rand::rngs::OsRng;
 use rand::RngCore;
 use sha256::digest;
@@ -10,7 +8,7 @@ mod types;
 mod utils;
 
 pub use language::Language;
-use crate::types::MnemonicType;
+pub use crate::types::MnemonicType;
 
 const MIN_WORDS: usize = 12;
 const MAX_WORDS: usize = 24;
@@ -98,16 +96,6 @@ impl Mnemonic {
             mnemonic
     }
 
-    /// Getter for the language.
-    pub fn language(&self) -> &Language {
-        &self.lang
-    }
-
-    /// Getter for the mnemonic type.
-    pub fn mnemonic_type(&self) -> MnemonicType {
-        self.mnemonic_type
-    }
-
     /// Getter for the checksum.
     pub fn checksum(&self) -> u8 {
         self.checksum
@@ -177,7 +165,7 @@ impl Mnemonic {
     }
 
     fn add_mnemonic_phrase(&mut self, word: String) {
-        // Function to push words in mnemonic field in my Struct
+        // Function to push words in mnemonic field in my Struct => Util function
         self.mnemonic_phrase.push(word);
     }
 }
