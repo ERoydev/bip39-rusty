@@ -20,6 +20,19 @@ fn main() {
     let mnemonic = Mnemonic::new(Language::English, MnemonicType::Bits256);
 
     // Display the getters()
-    println!("Generated Mnemonic Phrase: {:?}", mnemonic.mnemonic_phrase());
-    println!("Checksum: {}", mnemonic.checksum());
+    // println!("Generated Mnemonic Phrase: {:?}", mnemonic.mnemonic_phrase());
+    // println!("Checksum: {}", mnemonic.checksum());
+
+    // validate the checksum
+    let validation_result = mnemonic.validate_checksum();
+
+    match validation_result {
+        Ok(value) => {
+            println!("Its valid")
+        }
+        Err(e) => {
+            println!("Not valid")
+        }
+    }
+
 }

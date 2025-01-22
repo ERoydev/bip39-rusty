@@ -96,6 +96,21 @@ impl Mnemonic {
             mnemonic
     }
 
+    pub fn validate_checksum(&self) -> Result<bool, MnemonicError> {
+        let binary_entropy = self.convert_entropy_to_binary();
+        let checksum_bits = self.mnemonic_type.bits() / 32;
+
+        if binary_entropy.len() < checksum_bits {
+            return Err(MnemonicError::InvalidChecksum);
+        }
+
+        let checksum_binary = &binary_entropy[binary_entropy.len() - checksum_bits..];
+        let checksum_decimal = u8::from_str_radix(&checksum_binary, 2)
+            .map_err(|_| MnemonicError::InvalidChecksum)?;
+
+        Ok(checksum_decimal == self.checksum)
+    }
+
     /// Getter for the checksum.
     pub fn checksum(&self) -> u8 {
         self.checksum
