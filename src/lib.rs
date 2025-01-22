@@ -1,4 +1,5 @@
 use std::env::var;
+use std::thread::current;
 use rand::rngs::OsRng;
 use rand::RngCore;
 use sha256::digest;
@@ -16,13 +17,14 @@ pub struct Mnemonic {
     mnemonic_type: MnemonicType,
     entropy: Vec<u8>,
     checksum: u8,
-    mnemonic_phrase: String,
+    mnemonic_phrase: Vec<String>,
 }
 
 #[derive(Debug)]
 pub enum MnemonicError {
     InvalidChecksum,
-    InvalidEntropy
+    InvalidEntropy,
+    GeneratorError,
 }
 
 impl std::fmt::Display for MnemonicError {
@@ -30,6 +32,7 @@ impl std::fmt::Display for MnemonicError {
         match self {
             MnemonicError::InvalidChecksum => write!(f, "Invalid checksum."),
             MnemonicError::InvalidEntropy => write!(f, "Invalid entropy."),
+            MnemonicError::GeneratorError => write!(f, "Error when creating Mnemonic instance!")
         }
     }
 }
@@ -72,25 +75,36 @@ pub struct EntropyInfo {
 impl Mnemonic {
 
     pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
+        match Self::generator(lang, mnemonic_type) {
+            Ok(mut mnemonic) => {
+                mnemonic.mnemonic_phrase_generation();
+                Ok(mnemonic)
+            }
+            Err(e) => {
+                eprintln!("Error creating mnemonic: {}", e);
+                Err(MnemonicError::GeneratorError)
+            }
+        }
+    }
+
+    fn generator(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
         let mut raw_entropy = Mnemonic::generate_entropy(mnemonic_type);
         let checksum_decimal = Mnemonic::checksum(&raw_entropy, mnemonic_type)?;
-        let binary_entropy = Mnemonic::convert_entropy_to_binary(&raw_entropy);
-
-        println!("binary entropy: {}", binary_entropy);
-
         raw_entropy.push(checksum_decimal);
+
 
         Ok(Mnemonic {
             lang,
             mnemonic_type,
             entropy: raw_entropy,
             checksum: checksum_decimal,
-            mnemonic_phrase: String::new(),
+            mnemonic_phrase: Vec::new(),
         })
     }
 
     pub fn print_mnemonic_data(&self) {
         println!("Raw Entropy: {:?}, Checksum_decimal: {}", self.entropy, self.checksum);
+        println!("Mnemonic_phrases: {:?}", self.mnemonic_phrase);
     }
 
     fn generate_entropy(mnemonic_type: MnemonicType) -> Vec<u8> {
@@ -104,6 +118,9 @@ impl Mnemonic {
         entropy
     }
 
+    fn add_mnemonic_phrase(&mut self, word: String) {
+        self.mnemonic_phrase.push(word);
+    }
 
     fn checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> Result<u8, MnemonicError> {
         let hash = digest(entropy);
@@ -120,13 +137,35 @@ impl Mnemonic {
             .map_err(|_| MnemonicError::InvalidChecksum)
     }
 
-    fn convert_entropy_to_binary(entropy: &Vec<u8>) -> String {
+    fn convert_entropy_to_binary(&self) -> String {
         let mut binary_entropy = String::new();
-        for el in entropy {
+        for el in &self.entropy {
             // Ensure each byte is represented by exactly 8 bits
             let binary_repr = format!("{:08b}", el);
             binary_entropy += &binary_repr
         }
         binary_entropy
+    }
+
+    fn mnemonic_phrase_generation(&mut self) {
+        let binary_entropy = self.convert_entropy_to_binary(); // Convert entropy to binary
+
+        let mut start_idx = 0;
+        let mut chunks = Vec::new(); // ["01000110110", "11100010110" ...] each chunk of 11bits for 24 len if Bit256
+
+        // Loop through the binary string and extract 11-bit chunks
+        while start_idx + 11 <= binary_entropy.len() {
+            // Extract the chunk of 11 bits starting at `start_idx`
+            chunks.push(binary_entropy.get(start_idx..start_idx + 11).unwrap());
+            start_idx += 11; // Move to the next chunk
+        }
+
+        let wordlist = Language::get_predefined_word_list(&self.lang); // I take wordlist from language based on chosen one
+
+        for chunk in chunks {
+            let decimal = usize::from_str_radix(chunk, 2).unwrap(); // Convert binary to decimal
+            let phrase = wordlist[decimal];
+            self.add_mnemonic_phrase(String::from(phrase));
+        }
     }
 }

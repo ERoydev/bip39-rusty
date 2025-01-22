@@ -8,15 +8,12 @@ mod utils;
 fn main() {
     match Mnemonic::new(Language::English, MnemonicType::Bits256) {
         Ok(mnemonic) => {
-            println!("Mnemonic created successfully!");
+            println!("Mnemonic created");
             mnemonic.print_mnemonic_data();
         }
         Err(e) => {
-            eprintln!("Error creating mnemonic: {}", e);
+            eprintln!("Failed to create mnemonic");
         }
     }
 
-    let x = 42;
-    let binary_x = format!("{:b}", x);
-    println!("The binary representation of {} is {}", x, binary_x);
 }
