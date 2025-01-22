@@ -35,22 +35,30 @@ I Developed this to simplify using the bip39 more easily in rust than the curren
 Here is an example of how to use the library to generate a mnemonic phrase:
 
 ```rust
-use your_crate_name::{Mnemonic, MnemonicType, Language};
+use bip39_rusty::{Mnemonic, Language, MnemonicType};
 
 fn main() {
-    // Choose language and mnemonic type
-    let lang = Language::English;
-    let mnemonic_type = MnemonicType::Bits256;
+    /*
+        Demonstrating the use of the bip39-rusty library to generate a BIP39 mnemonic phrase.
 
-    // Generate a new mnemonic
-    match Mnemonic::new(lang, mnemonic_type) {
-        Ok(mnemonic) => {
-            mnemonic.print_mnemonic_data(); // Print mnemonic data
-        }
-        Err(e) => {
-            eprintln!("Failed to generate mnemonic: {}", e);
-        }
-    }
+        The `Mnemonic` struct expects:
+            - Language (e.g., Language::English)
+            - MnemonicType (e.g., Bits128 or Bits256)
+
+        Once created, you can use the following getter methods:
+            - .checksum()        => Returns the checksum used for verification.
+            - .mnemonic_phrase() => Returns the generated mnemonic phrase as a Vec<String>.
+
+        Note: If any internal error occurs during mnemonic generation,
+              the library will return a default Mnemonic with 256 bits and Language::English type.
+    */
+
+    // Create a new mnemonic
+    let mnemonic = Mnemonic::new(Language::English, MnemonicType::Bits256);
+
+    // Display the getters()
+    println!("Generated Mnemonic Phrase: {:?}", mnemonic.mnemonic_phrase());
+    println!("Checksum: {}", mnemonic.checksum());
 }
 ```
 
