@@ -111,38 +111,41 @@ impl Mnemonic {
         let mut rng = OsRng {};
         let entropy_bytes_count = mnemonic_type.bytes();
 
-        let mut entropy = vec![0u8; entropy_bytes_count]; // empty vector
+        let mut entropy = vec![0u8; entropy_bytes_count]; // empty vector [0, 0, 0, 0, 0...] with length of 16 or 32 depends of mnemonic_type
 
         // Fill the vector with random bytes
-        rng.fill_bytes(&mut entropy);
+        rng.fill_bytes(&mut entropy); // [123, 23, 123, 23, 123...]
         entropy
     }
 
     fn generate_checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> u8 {
-        let hash = digest(entropy);
+        let hash = digest(entropy); // Hash the entropy using sha256 which returns it in hexadecimal
 
         if hash.len() < 2 {
             panic!("Hash must be at least 2 characters.");
         }
 
         let checksum_bits = mnemonic_type.bits() / 32;
-        let checksum_index = if checksum_bits == 4 {1} else if checksum_bits == 8 {2} else {0};
+        let checksum_index = if checksum_bits == 4 {1} else if checksum_bits == 8 {2} else {0}; // i take 4 bits or 8 bits
 
         let checksum = &hash[..checksum_index]; // checksum in hexadecimal
         u8::from_str_radix(&checksum, 16).expect("Failed to parse checksum as u8") // I convert hexadecimal to decimal in order to append in my raw entropy
     }
 
     fn convert_entropy_to_binary(&self) -> String {
+        // [123, 231 ,123 ,123 ,43 ,123, 231(checksum)] => 0011100111011001110011
         let mut binary_entropy = String::new();
+
         for el in &self.entropy {
             // Ensure each byte is represented by exactly 8 bits
             let binary_repr = format!("{:08b}", el);
             binary_entropy += &binary_repr
         }
-        binary_entropy
+        binary_entropy // => 011011001110111
     }
 
     fn mnemonic_phrase_generation(&mut self) {
+        // Convert my raw entropy + checksum into binary, divide it into chunks of 11-bit each with length of 24 (words) or 12 (words)
         let binary_entropy = self.convert_entropy_to_binary(); // Convert entropy to binary
 
         let mut start_idx = 0;
@@ -158,6 +161,8 @@ impl Mnemonic {
         let wordlist = Language::get_predefined_word_list(&self.lang); // I take wordlist from language based on chosen one
 
         for chunk in chunks {
+            // I have some number calculated from my 11-bit binary from 0 to 2047 and i have wordlist with 2048
+            // I use this decimal representation as index to take word from my predefined list
             let decimal = usize::from_str_radix(chunk, 2).unwrap(); // Convert binary to decimal
             let phrase = wordlist[decimal];
             self.add_mnemonic_phrase(String::from(phrase));

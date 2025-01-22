@@ -9,9 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8ec9df04-53c8-45a4-bdbe-9c47e38d3ec8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/generate_mnemonics.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/generate_mnemonics.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +142,7 @@
       <workItem from="1737491299480" duration="3896000" />
       <workItem from="1737497274621" duration="1684000" />
       <workItem from="1737499815634" duration="5978000" />
-      <workItem from="1737539287355" duration="11390000" />
+      <workItem from="1737539287355" duration="12753000" />
     </task>
     <servers />
   </component>
