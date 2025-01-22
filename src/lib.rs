@@ -6,19 +6,15 @@ use sha256::digest;
 use hex;
 
 mod language;
-pub use language::Language;
+mod types;
+mod utils;
 
+pub use language::Language;
+use crate::types::MnemonicType;
 
 const MIN_WORDS: usize = 12;
 const MAX_WORDS: usize = 24;
-
-pub struct Mnemonic {
-    lang: Language,
-    mnemonic_type: MnemonicType,
-    entropy: Vec<u8>,
-    checksum: u8,
-    mnemonic_phrase: Vec<String>,
-}
+const DEFAULT_MNEMONIC_TYPE: MnemonicType = MnemonicType::Bits256; // Default Mnemonic Type when error occurs
 
 #[derive(Debug)]
 pub enum MnemonicError {
@@ -37,56 +33,69 @@ impl std::fmt::Display for MnemonicError {
     }
 }
 
-#[derive(Copy, Clone)]
-pub enum MnemonicType {
-    Bits128, // 128 bits of entropy -> 16 bytes (128 bits / 8)
-    Bits256, // 256 bits of entropy -> 32 bytes (256 bits / 8)
-}
-
-impl MnemonicType {
-    pub const fn bytes(&self) -> usize {
-        match self {
-            MnemonicType::Bits128 => 16,
-            MnemonicType::Bits256 => 32,
-        }
-    }
-
-    pub const fn bits(&self) -> usize {
-        match self {
-            MnemonicType::Bits128 => 128,
-            MnemonicType::Bits256 => 256,
-        }
-    }
-
-    pub const fn words_count(&self) -> usize {
-        match self {
-            MnemonicType::Bits128 => MIN_WORDS,
-            MnemonicType::Bits256 => MAX_WORDS,
-        }
-    }
-}
-
 pub struct EntropyInfo {
     pub bytes: usize,
     pub bits: usize,
 }
 
+pub struct Mnemonic {
+    lang: Language,
+    mnemonic_type: MnemonicType,
+    entropy: Vec<u8>,
+    checksum: u8,
+    mnemonic_phrase: Vec<String>,
+}
+
 
 impl Mnemonic {
 
-    pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
-        // Used to create instance and use this instance to create mnemonic_phrases
+    /// Wrapper for .generator() function, created to handle errors
+    pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Mnemonic {
         match Self::generator(lang, mnemonic_type) {
             Ok(mut mnemonic) => {
-                // After i have instance create i can generate phrase
                 mnemonic.mnemonic_phrase_generation();
-                Ok(mnemonic)
+                mnemonic
             }
             Err(e) => {
-                eprintln!("Error creating mnemonic: {}", e);
-                Err(MnemonicError::GeneratorError)
+                eprintln!("Error creating mnemonic: {}, using default fallback", e);
+                // Provide default Mnemonic as fallback if error happen
+                Mnemonic::default()
             }
         }
+    }
+
+    /// Main function for creating an instance of Mnemonic Struct
+    fn generator(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
+        /*
+        This is responsible to create Mnemonic instance and set initial values for entropy and checksum
+        */
+        let (mut raw_entropy, checksum_decimal) = utils::prepare_data_for_mnemonic_struct_initialization(mnemonic_type); // Derive entropy and checksum
+        raw_entropy.push(checksum_decimal);
+
+        Ok(Mnemonic {
+            lang,
+            mnemonic_type,
+            entropy: raw_entropy,
+            checksum: checksum_decimal,
+            mnemonic_phrase: Vec::new(),
+        })
+    }
+
+    /// Handler if an error occurs inside .new() wrapper of .generator() to return default Mnemonic instance
+    fn default() -> Mnemonic {
+            let (mut raw_entropy, checksum_decimal) = utils::prepare_data_for_mnemonic_struct_initialization(DEFAULT_MNEMONIC_TYPE);
+            raw_entropy.push(checksum_decimal);
+
+            let mut mnemonic = Mnemonic {
+                lang: Language::English,
+                mnemonic_type: DEFAULT_MNEMONIC_TYPE,
+                entropy: raw_entropy,
+                checksum: checksum_decimal,
+                mnemonic_phrase: Vec::new(),
+            };
+
+            mnemonic.mnemonic_phrase_generation();
+            mnemonic
     }
 
     /// Getter for the language.
@@ -109,24 +118,7 @@ impl Mnemonic {
         &self.mnemonic_phrase
     }
 
-    fn generator(lang: Language, mnemonic_type: MnemonicType) -> Result<Mnemonic, MnemonicError> {
-        /*
-        This is responsible to create Mneumonic instance and set initial values for checksum, entropy and so on
-        */
-        let mut raw_entropy = Mnemonic::generate_entropy(mnemonic_type);
-        let checksum_decimal = Mnemonic::generate_checksum(&raw_entropy, mnemonic_type)?;
-        raw_entropy.push(checksum_decimal);
-
-
-        Ok(Mnemonic {
-            lang,
-            mnemonic_type,
-            entropy: raw_entropy,
-            checksum: checksum_decimal,
-            mnemonic_phrase: Vec::new(),
-        })
-    }
-
+    /// Bellow are functions that implement my bip39 cryptography
     fn generate_entropy(mnemonic_type: MnemonicType) -> Vec<u8> {
         let mut rng = OsRng {};
         let entropy_bytes_count = mnemonic_type.bytes();
@@ -138,7 +130,7 @@ impl Mnemonic {
         entropy
     }
 
-    fn generate_checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> Result<u8, MnemonicError> {
+    fn generate_checksum(entropy: &Vec<u8>, mnemonic_type: MnemonicType) -> u8 {
         let hash = digest(entropy);
 
         if hash.len() < 2 {
@@ -149,8 +141,7 @@ impl Mnemonic {
         let checksum_index = if checksum_bits == 4 {1} else if checksum_bits == 8 {2} else {0};
 
         let checksum = &hash[..checksum_index]; // checksum in hexadecimal
-        u8::from_str_radix(&checksum, 16)// I convert hexadecimal to decimal in order to append in my raw entropy
-            .map_err(|_| MnemonicError::InvalidChecksum)
+        u8::from_str_radix(&checksum, 16).expect("Failed to parse checksum as u8") // I convert hexadecimal to decimal in order to append in my raw entropy
     }
 
     fn convert_entropy_to_binary(&self) -> String {
