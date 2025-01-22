@@ -41,8 +41,8 @@ fn main() {
     /*
         Demonstrating the use of the bip39-rusty library to generate a BIP39 mnemonic phrase.
 
-        The `Mnemonic` struct expects:
-            - Language (e.g., Language::English)
+        The `Mnemonic` struct expects as parameters:
+            - Language (e.g., Language::English,)
             - MnemonicType (e.g., Bits128 or Bits256)
 
         Once created, you can use the following getter methods:
@@ -68,10 +68,10 @@ fn main() {
 - Represents a BIP-39 mnemonic phrase.
 - Fields:
   - `lang`: Language for the wordlist.
-  - `mnemonic_type`: Type of mnemonic (128-bit or 256-bit entropy).
-  - `entropy`: Generated entropy bytes.
-  - `checksum`: Checksum appended to entropy.
-  - `mnemonic_phrase`: List of words representing the mnemonic phrase.
+  - `mnemonic_type`: Type of mnemonic.
+  - `entropy`: Generated entropy bytes. 
+  - `checksum`: Checksum appended to entropy. 
+  - `mnemonic_phrase`: List of words representing the mnemonic phrase. 
 
 ### MnemonicType
 - Enum representing the type of mnemonic:
@@ -80,7 +80,20 @@ fn main() {
 
 ### Language
 - Represents the wordlist language. You can add custom wordlists by extending this module.
-
+```rust
+pub enum Language {
+    ChineseSimplified,
+    ChineseTraditional,
+    Czech,
+    English,
+    French,
+    Italian,
+    Japanese,
+    Korean,
+    Portuguese,
+    Spanish
+}
+```
 ## Wordlist Support
 
 The `Language` module provides predefined wordlists. Currently supported:
