@@ -25,10 +25,10 @@ fn main() {
     let validation_result = mnemonic.validate_checksum();
 
     match validation_result {
-        Ok(value) => {
+        Ok(_value) => {
             println!("Its valid")
         }
-        Err(e) => {
+        Err(_e) => {
             println!("Not valid")
         }
     }
