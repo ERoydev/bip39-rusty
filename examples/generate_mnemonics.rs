@@ -8,8 +8,7 @@ fn main() {
             - Language (e.g., Language::English)
             - MnemonicType (e.g., Bits128 or Bits256)
 
-        Once created, you can use the following getter methods:
-            - .checksum()        => Returns the checksum used for verification.
+        Once created, you can use the following getter method:
             - .mnemonic_phrase() => Returns the generated mnemonic phrase as a Vec<String>.
 
         Note: If any internal error occurs during mnemonic generation,
@@ -19,9 +18,8 @@ fn main() {
     // Create a new mnemonic
     let mnemonic = Mnemonic::new(Language::English, MnemonicType::Bits256);
 
-    // Display the getters()
-    // println!("Generated Mnemonic Phrase: {:?}", mnemonic.mnemonic_phrase());
-    // println!("Checksum: {}", mnemonic.checksum());
+    // Display the mnemonic phrases
+    println!("Generated Mnemonic Phrase: {:?}", mnemonic.mnemonic_phrase());
 
     // validate the checksum
     let validation_result = mnemonic.validate_checksum();

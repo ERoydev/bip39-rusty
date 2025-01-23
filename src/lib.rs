@@ -73,7 +73,7 @@ impl Mnemonic {
         Ok(Mnemonic {
             lang,
             mnemonic_type,
-            entropy: raw_entropy,
+            entropy: raw_entropy, // I store it entropy + checksum
             checksum: checksum_decimal,
             mnemonic_phrase: Vec::new(),
         })
@@ -97,6 +97,11 @@ impl Mnemonic {
     }
 
     pub fn validate_checksum(&self) -> Result<bool, MnemonicError> {
+        /*
+            I use binary representation of entropy since i store entropy + checksum
+            Then i calculate how many bits is my checksum and i retrieve it
+            I convert it to decimal and compare it with my self.checksum to see if it is the same
+        */
         let binary_entropy = self.convert_entropy_to_binary();
         let checksum_bits = self.mnemonic_type.bits() / 32;
 
@@ -109,11 +114,6 @@ impl Mnemonic {
             .map_err(|_| MnemonicError::InvalidChecksum)?;
 
         Ok(checksum_decimal == self.checksum)
-    }
-
-    /// Getter for the checksum.
-    pub fn checksum(&self) -> u8 {
-        self.checksum
     }
 
     /// Getter for the mnemonic phrase.
