@@ -1,7 +1,6 @@
 use rand::rngs::OsRng;
 use rand::RngCore;
 use sha256::digest;
-use hex;
 
 mod language;
 mod types;

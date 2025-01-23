@@ -2,12 +2,17 @@
 name = "bip39-rusty"
 version = "0.1.0"
 edition = "2021"
+authors = ["Emil Roydev e.roydev@gmail.com"]
+description = "Bip39 implementation mnemonic system in rust"
+license = "MIT"
+repository = ""
+homepage = ""
+readme = "README.md"
+keywords = ["bip39", "cryptography", "Bitcoin", "bip39-rust", "bip39-rusty"]
+categories = ["cryptography", "algorithms", "cryptography::cryptocurrencies"]
+
+
 
 [dependencies]
-hex = "0.4.3"
 rand = "0.8.5"
 sha256 = "1.5.0"
-thiserror = "2.0.11"
-
-[dev-dependencies]
-anyhow = "1"
