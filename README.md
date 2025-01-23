@@ -41,12 +41,11 @@ fn main() {
     /*
         Demonstrating the use of the bip39-rusty library to generate a BIP39 mnemonic phrase.
 
-        The `Mnemonic` struct expects as parameters:
-            - Language (e.g., Language::English,)
+        The `Mnemonic` struct expects:
+            - Language (e.g., Language::English)
             - MnemonicType (e.g., Bits128 or Bits256)
 
-        Once created, you can use the following getter methods:
-            - .checksum()        => Returns the checksum used for verification.
+        Once created, you can use the following getter method:
             - .mnemonic_phrase() => Returns the generated mnemonic phrase as a Vec<String>.
 
         Note: If any internal error occurs during mnemonic generation,
@@ -56,9 +55,21 @@ fn main() {
     // Create a new mnemonic
     let mnemonic = Mnemonic::new(Language::English, MnemonicType::Bits256);
 
-    // Display the getters()
+    // Display the mnemonic phrases
     println!("Generated Mnemonic Phrase: {:?}", mnemonic.mnemonic_phrase());
-    println!("Checksum: {}", mnemonic.checksum());
+
+    // validate the checksum
+    let validation_result = mnemonic.validate_checksum();
+
+    match validation_result {
+        Ok(value) => {
+            println!("Its valid")
+        }
+        Err(e) => {
+            println!("Not valid")
+        }
+    }
+
 }
 ```
 
