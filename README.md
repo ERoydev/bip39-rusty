@@ -1,5 +1,7 @@
 # BIP-39 Implementation in Rust
 
+Crate Url: https://crates.io/crates/bip39-rusty
+
 This repository contains a custom implementation of the BIP-39 standard in Rust. The implementation allows for the generation of mnemonic phrases based on entropy, checksum, and wordlists. It supports multiple languages and mnemonic types (128-bit and 256-bit entropy).
 I Developed this to simplify using the bip39 more easily in rust than the current bip39 that i found. The code is easy to understand and well documented, feel free to suggest improvements :)
 ## Features
