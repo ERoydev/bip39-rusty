@@ -46,12 +46,42 @@ pub struct Mnemonic {
 
 impl Mnemonic {
 
+    pub fn is_valid(&self) -> bool {
+        // Check if mnemonic phrase is not empty
+        if self.mnemonic_phrase.is_empty() {
+            return false;
+        }
+
+        // Check if mnemonic_phrase words count is in the required Ranges
+        let word_count = self.mnemonic_phrase.len();
+        if !matches!(word_count, MIN_WORDS | MAX_WORDS) {
+            return false;
+        }
+
+        // Check if phrases exists in the wordlist
+        let wordlist = Language::get_predefined_word_list(&self.lang);
+        for word in &self.mnemonic_phrase {
+            if !wordlist.contains(&word.as_str()) {
+                return false;
+            }
+        }
+
+        true
+    }
+
     /// Wrapper for .generator() function, created to handle errors
     pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Mnemonic {
         match Self::generator(lang, mnemonic_type) {
             Ok(mut mnemonic) => {
                 mnemonic.mnemonic_phrase_generation();
-                mnemonic
+
+                // Check if the generated mnemonic is valid before returning it
+                if mnemonic.is_valid() {
+                    mnemonic
+                } else {
+                    eprintln!("Generated mnemonic is invalid, using default fallback.");
+                    Mnemonic::default()
+                }
             }
             Err(e) => {
                 eprintln!("Error creating mnemonic: {}, using default fallback", e);
@@ -109,7 +139,7 @@ impl Mnemonic {
         }
 
         let checksum_binary = &binary_entropy[binary_entropy.len() - checksum_bits..];
-        let checksum_decimal = u8::from_str_radix(&checksum_binary, 2)
+        let checksum_decimal = u8::from_str_radix(checksum_binary, 2)
             .map_err(|_| MnemonicError::InvalidChecksum)?;
 
         Ok(checksum_decimal == self.checksum)
@@ -143,7 +173,7 @@ impl Mnemonic {
         let checksum_index = if checksum_bits == 4 {1} else if checksum_bits == 8 {2} else {0}; // i take 4 bits or 8 bits
 
         let checksum = &hash[..checksum_index]; // checksum in hexadecimal
-        u8::from_str_radix(&checksum, 16).expect("Failed to parse checksum as u8") // I convert hexadecimal to decimal in order to append in my raw entropy
+        u8::from_str_radix(checksum, 16).expect("Failed to parse checksum as u8") // I convert hexadecimal to decimal in order to append in my raw entropy
     }
 
     fn convert_entropy_to_binary(&self) -> String {
