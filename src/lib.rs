@@ -97,6 +97,9 @@ impl Mnemonic {
         This is responsible to create Mnemonic instance and set initial values for entropy and checksum
         */
         let (mut raw_entropy, checksum_decimal) = utils::prepare_data_for_mnemonic_struct_initialization(mnemonic_type); // Derive entropy and checksum
+
+        Self::validate_entropy(&raw_entropy).map_err(|_e| MnemonicError::InvalidEntropy)?;
+
         raw_entropy.push(checksum_decimal);
 
         Ok(Mnemonic {
@@ -131,7 +134,7 @@ impl Mnemonic {
             Then i calculate how many bits is my checksum and i retrieve it
             I convert it to decimal and compare it with my self.checksum to see if it is the same
         */
-        let binary_entropy = self.convert_entropy_to_binary();
+        let binary_entropy = Self::convert_entropy_to_binary(&self.entropy);
         let checksum_bits = self.mnemonic_type.bits() / 32;
 
         if binary_entropy.len() < checksum_bits {
@@ -176,11 +179,11 @@ impl Mnemonic {
         u8::from_str_radix(checksum, 16).expect("Failed to parse checksum as u8") // I convert hexadecimal to decimal in order to append in my raw entropy
     }
 
-    fn convert_entropy_to_binary(&self) -> String {
+    fn convert_entropy_to_binary(entropy: &Vec<u8>) -> String {
         // [123, 231 ,123 ,123 ,43 ,123, 231(checksum)] => 0011100111011001110011
         let mut binary_entropy = String::new();
 
-        for el in &self.entropy {
+        for el in entropy {
             // Ensure each byte is represented by exactly 8 bits
             let binary_repr = format!("{:08b}", el);
             binary_entropy += &binary_repr
@@ -190,7 +193,7 @@ impl Mnemonic {
 
     fn mnemonic_phrase_generation(&mut self) {
         // Convert my raw entropy + checksum into binary, divide it into chunks of 11-bit each with length of 24 (words) or 12 (words)
-        let binary_entropy = self.convert_entropy_to_binary(); // Convert entropy to binary
+        let binary_entropy = Self::convert_entropy_to_binary(&self.entropy);
 
         let mut start_idx = 0;
         let mut chunks = Vec::new(); // ["01000110110", "11100010110" ...] each chunk of 11bits for 24 len if Bit256
@@ -217,4 +220,67 @@ impl Mnemonic {
         // Function to push words in mnemonic field in my Struct => Util function
         self.mnemonic_phrase.push(word);
     }
+
+    fn validate_entropy(entropy: &Vec<u8>) -> Result<(), String> {
+        let entropy_bits = entropy.len() * 8;
+        if entropy_bits != 128 && entropy_bits != 256 {
+            return Err(format!(
+                "Invalid entropy length: expected 128 or 256 bits, but got {} bits",
+                entropy_bits
+            ));
+        }
+        Ok(())  // Return Ok if the entropy length is valid
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+
+    #[test]
+    fn test_valid_entropy_vector() {
+        // Example valid entropy in decimal (corresponding to 128 bits)
+        let entropy128: Vec<u8> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        let entropy256 = vec![
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+        ];
+
+        let entropy_binary128 = Mnemonic::convert_entropy_to_binary(&entropy128);
+        let entropy_binary256 = Mnemonic::convert_entropy_to_binary(&entropy256);
+
+        let validate128 = Mnemonic::validate_entropy(&entropy128);
+        let validate256 = Mnemonic::validate_entropy(&entropy256);
+
+        assert!(validate128.is_ok(), "Entropy should correct");
+        assert!(validate256.is_ok(), "Entropy should be correct");
+
+        assert_eq!(entropy_binary128.len(), 128, "Binary length for entropy128 should be 128 bits");
+        assert_eq!(entropy_binary256.len(), 256, "Binary length for entropy256 should be 256 bits");
+    }
+
+    #[test]
+    fn test_invalid_entropy_vector() {
+        let entropy128: Vec<u8> = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+        let entropy256 = vec![
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+        ];
+
+        let entropy_binary128 = Mnemonic::convert_entropy_to_binary(&entropy128);
+        let entropy_binary256 = Mnemonic::convert_entropy_to_binary(&entropy256);
+
+        let validate128 = Mnemonic::validate_entropy(&entropy128);
+        let validate256 = Mnemonic::validate_entropy(&entropy256);
+
+        assert!(validate128.is_err(), "Entropy is invalid");
+        assert!(validate256.is_err(), "Entropy is invalid");
+
+        assert_ne!(entropy_binary128.len(), 128);
+        assert_ne!(entropy_binary256.len(), 256);
+    }
+
+
 }

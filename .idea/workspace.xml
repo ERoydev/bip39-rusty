@@ -9,14 +9,15 @@
   <component name="ChangeListManager">
     <list default="true" id="8ec9df04-53c8-45a4-bdbe-9c47e38d3ec8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/integration_tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integration_tests.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/integration_tests.rs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:dev" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -42,29 +43,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Cargo.Run bip39-rusty.executor&quot;: &quot;Debug&quot;,
-    &quot;Cargo.Run generate_mnemonics.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test test_valid_mnemonic_creation_with_new_method.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Programming/rust_learning/bip39-rusty&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Cargo.Run bip39-rusty.executor": "Debug",
+    "Cargo.Run generate_mnemonics.executor": "Run",
+    "Cargo.Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance.executor": "Debug",
+    "Cargo.Test test_valid_mnemonic_creation_with_new_method.executor": "Run",
+    "Cargo.Test tests::test_phrases_vector.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Programming/rust_learning/bip39-rusty",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Cargo.Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance">
+}]]></component>
+  <component name="RunManager" selected="Cargo.Run generate_mnemonics">
     <configuration name="Run bip39-rusty" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="buildProfileId" value="dev" />
       <option name="command" value="run --package bip39-rusty --bin bip39-rusty" />
@@ -153,11 +155,29 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Test tests::test_phrases_vector" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bip39-rusty --lib tests::test_phrases_vector -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Run generate_mnemonics" />
+        <item itemvalue="Cargo.Test tests::test_phrases_vector" />
         <item itemvalue="Cargo.Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance" />
         <item itemvalue="Cargo.Test test_valid_mnemonic_creation_with_new_method" />
-        <item itemvalue="Cargo.Run generate_mnemonics" />
       </list>
     </recent_temporary>
   </component>
@@ -189,7 +209,7 @@
       <workItem from="1737539287355" duration="24064000" />
       <workItem from="1737625343268" duration="5115000" />
       <workItem from="1737766778491" duration="4818000" />
-      <workItem from="1737987016266" duration="1284000" />
+      <workItem from="1737987016266" duration="8908000" />
     </task>
     <servers />
   </component>
