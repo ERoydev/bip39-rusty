@@ -8,16 +8,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ec9df04-53c8-45a4-bdbe-9c47e38d3ec8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/bip39-rusty.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/bip39-rusty.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/integration_tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integration_tests.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:dev" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -47,6 +46,8 @@
   &quot;keyToString&quot;: {
     &quot;Cargo.Run bip39-rusty.executor&quot;: &quot;Debug&quot;,
     &quot;Cargo.Run generate_mnemonics.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test test_valid_mnemonic_creation_with_new_method.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
@@ -63,7 +64,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Cargo.Run generate_mnemonics">
+  <component name="RunManager" selected="Cargo.Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance">
     <configuration name="Run bip39-rusty" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="buildProfileId" value="dev" />
       <option name="command" value="run --package bip39-rusty --bin bip39-rusty" />
@@ -83,6 +84,7 @@
       </method>
     </configuration>
     <configuration name="Run generate_mnemonics" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="buildProfileId" value="dev" />
       <option name="command" value="run --package bip39-rusty --example generate_mnemonics" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
@@ -116,8 +118,45 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bip39-rusty --test integration_tests test_invalid_mnemonic_creation__returns_default_mnemonic_instance -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test test_valid_mnemonic_creation_with_new_method" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="buildProfileId" value="test" />
+      <option name="command" value="test --package bip39-rusty --test integration_tests test_valid_mnemonic_creation_with_new_method -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test test_invalid_mnemonic_creation__returns_default_mnemonic_instance" />
+        <item itemvalue="Cargo.Test test_valid_mnemonic_creation_with_new_method" />
         <item itemvalue="Cargo.Run generate_mnemonics" />
       </list>
     </recent_temporary>
@@ -149,7 +188,8 @@
       <workItem from="1737499815634" duration="5978000" />
       <workItem from="1737539287355" duration="24064000" />
       <workItem from="1737625343268" duration="5115000" />
-      <workItem from="1737766778491" duration="2591000" />
+      <workItem from="1737766778491" duration="4818000" />
+      <workItem from="1737987016266" duration="1284000" />
     </task>
     <servers />
   </component>
