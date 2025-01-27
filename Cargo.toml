@@ -14,5 +14,6 @@ categories = ["cryptography", "algorithms", "cryptography::cryptocurrencies"]
 
 
 [dependencies]
+hex = "0.4.3"
 rand = "0.8.5"
 sha256 = "1.5.0"

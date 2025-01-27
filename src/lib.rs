@@ -8,6 +8,7 @@ mod utils;
 
 pub use language::Language;
 pub use crate::types::MnemonicType;
+pub use utils::hex_to_binary;
 
 const MIN_WORDS: usize = 12;
 const MAX_WORDS: usize = 24;
@@ -73,7 +74,8 @@ impl Mnemonic {
     pub fn new(lang: Language, mnemonic_type: MnemonicType) -> Mnemonic {
         match Self::generator(lang, mnemonic_type) {
             Ok(mut mnemonic) => {
-                mnemonic.mnemonic_phrase_generation();
+                let binary_entropy = Self::convert_entropy_to_binary(&mnemonic.entropy);
+                mnemonic.mnemonic_phrase_generation(binary_entropy);
 
                 // Check if the generated mnemonic is valid before returning it
                 if mnemonic.is_valid() {
@@ -124,7 +126,8 @@ impl Mnemonic {
                 mnemonic_phrase: Vec::new(),
             };
 
-            mnemonic.mnemonic_phrase_generation();
+            let binary_entropy = Self::convert_entropy_to_binary(&mnemonic.entropy);
+            mnemonic.mnemonic_phrase_generation(binary_entropy);
             mnemonic
     }
 
@@ -191,10 +194,8 @@ impl Mnemonic {
         binary_entropy // => 011011001110111
     }
 
-    fn mnemonic_phrase_generation(&mut self) {
+    fn mnemonic_phrase_generation(&mut self, binary_entropy: String) {
         // Convert my raw entropy + checksum into binary, divide it into chunks of 11-bit each with length of 24 (words) or 12 (words)
-        let binary_entropy = Self::convert_entropy_to_binary(&self.entropy);
-
         let mut start_idx = 0;
         let mut chunks = Vec::new(); // ["01000110110", "11100010110" ...] each chunk of 11bits for 24 len if Bit256
 
@@ -238,7 +239,6 @@ impl Mnemonic {
 mod tests {
     use super::*;
 
-
     #[test]
     fn test_valid_entropy_vector() {
         // Example valid entropy in decimal (corresponding to 128 bits)
@@ -278,9 +278,42 @@ mod tests {
         assert!(validate128.is_err(), "Entropy is invalid");
         assert!(validate256.is_err(), "Entropy is invalid");
 
-        assert_ne!(entropy_binary128.len(), 128);
-        assert_ne!(entropy_binary256.len(), 256);
+        assert_ne!(entropy_binary128.len(), 128, "Expected entropy128 binary length to be 128, but it's not.");
+        assert_ne!(entropy_binary256.len(), 256, "Expected entropy256 binary length to be 256, but it's not.");
     }
 
+    #[test]
+    fn test_valid_mnemonic_phrase() {
+        let lang = Language::English;
+        let mnemonic_type = MnemonicType::Bits128;
+
+        let mut mnemonic = Mnemonic::new(lang, mnemonic_type);
+
+        let test_data = [
+            "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+            "legal winner thank year wave sausage worth useful legal winner thank yellow",
+            "2e8905819b8723fe2c1d161860e5ee1830318dbf49a83bd451cfb8440c28bd6fa457fe1296106559a3c80937a1c1069be3a3a5bd381ee6260e8d9739fce1f607"
+        ];
+
+        let mut binary_hex = hex_to_binary(&test_data[0]);
+        let entropy_bytes = hex::decode(test_data[0]).expect("Invalid hex string");
+        let hash = digest(entropy_bytes);
+
+        // Decode the hash into bytes
+        let hash_bytes = hex::decode(hash).expect("Invalid hash string");
+
+        // Extract the first 4 bits from the first byte of the hash
+        let checksum_binary = format!("{:08b}", hash_bytes[0]); // Convert first byte to binary
+        let checksum_binary = &checksum_binary[0..4]; // Take only the first 4 bits
+
+        binary_hex += checksum_binary;
+
+        let expected_phrases: Vec<&str> = test_data[1].split_whitespace().collect();
+
+        mnemonic.mnemonic_phrase_generation(binary_hex);
+
+        // When i create an instance i already create 12 phrases so when i use phrase_generation i just take those phrases to see if they are equal
+        assert_eq!(mnemonic.mnemonic_phrase[12..], expected_phrases);
+    }
 
 }
