@@ -15,8 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build
+    - name: Fetch repo code into ubuntu machine
+      uses: actions/checkout@v4
+    - name: Compile Rust project
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+      
