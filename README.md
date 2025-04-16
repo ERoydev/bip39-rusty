@@ -17,6 +17,7 @@ I Developed this to simplify using the bip39 more easily in rust than the curren
    ```bash
    git clone https://github.com/your-username/bip39-rust.git
    
+   
    cd bip39-rust
    ```
 
